@@ -40,7 +40,7 @@ def get_phylo_group_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).items():
         s.append(k)
         per_cov.append(str(v))
     return ";".join(s), ".", ";".join(per_cov)
@@ -50,7 +50,7 @@ def get_species_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("species", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("species", {}).items():
         s.append(k)
         per_cov.append(str(v))
     return ";".join(s), ".", ";".join(per_cov)
@@ -61,7 +61,7 @@ def get_lineage_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("lineage", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("lineage", {}).items():
         s.append(k)
         per_cov.append(str(v))
     return ";".join(s), ".", ";".join(per_cov)
@@ -88,7 +88,7 @@ def get_mean_read_length(d):
 
 def get_called_genes(d, drug=None):
     genes = []
-    for gene, coverage in d.get("called_genes", {}).iteritems():
+    for gene, coverage in d.get("called_genes", {}).items():
         if coverage.get("induced_resistance") == drug:
             genes.append(":".join([gene,
                                    str(coverage.get("per_cov")),
@@ -97,7 +97,7 @@ def get_called_genes(d, drug=None):
 
 def get_called_variants(d, drug=None):
     variants = []
-    for variant, coverage in d.get("called_variants", {}).iteritems():
+    for variant, coverage in d.get("called_variants", {}).items():
         if coverage.get("induced_resistance") == drug:
             variants.append(":".join([variant,
                                    str(coverage.get("R_median_cov")),
@@ -123,7 +123,7 @@ if args.format == "long":
         "susceptibility",
         "genes (gene:percent_coverage:depth)",
         "variants (prot_mut-ref_mut:alt_depth:wt_depth)"]
-    print "\t".join(header)
+    print("\t".join(header))
     rows = []
     for i, f in enumerate(args.files):
         file = get_file_name(f)
@@ -167,7 +167,7 @@ if args.format == "long":
                 call,
                 called_by,
                 called_by_variants]
-            print "\t".join(row)
+            print("\t".join(row))
 
 else:
     0 / 0

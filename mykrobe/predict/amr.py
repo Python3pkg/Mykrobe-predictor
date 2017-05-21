@@ -79,12 +79,12 @@ class BasePredictor(object):
         self.resistance_predictions = self.result.susceptibility
 
     def _get_drug_list_from_variant_to_resistance_drug(self):
-        return unique(flatten(self.variant_or_gene_name_to_resistance_drug.values()))
+        return unique(flatten(list(self.variant_or_gene_name_to_resistance_drug.values())))
 
     def predict_antibiogram(self):
-        for allele_name, variant_call in self.variant_calls.items():
+        for allele_name, variant_call in list(self.variant_calls.items()):
             self._update_resistance_prediction(allele_name, variant_call)
-        for name, gene in self.called_genes.items():
+        for name, gene in list(self.called_genes.items()):
             if isinstance(gene, list):
                 if len(gene) > 1:
                     logging.warning(

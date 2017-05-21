@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import json
 import os
 import operator
@@ -23,16 +23,16 @@ class Hierarchy(object):
 
     def get_phylo_group(self, target_species):
         phylo_group = []
-        for k, v in self.dict.items():
+        for k, v in list(self.dict.items()):
             if k == target_species:
                 return v
-            for k2, v2 in v["children"].items():
+            for k2, v2 in list(v["children"].items()):
                 if k2 == target_species:
                     return v2
-                for k3, v3 in v2["children"].items():
+                for k3, v3 in list(v2["children"].items()):
                     if k3 == target_species:
                         return v3
-                    for k4, v4 in v3["children"].items():
+                    for k4, v4 in list(v3["children"].items()):
                         if k4 == target_species:
                             return v4
 
@@ -80,7 +80,7 @@ class SpeciesPredictor(object):
     def calc_expected_depth(self):
         # Get all of the panels with % coverage > 30
         _median = []
-        for phylo_group, coverage_dict in self.phylo_group_covgs.items():
+        for phylo_group, coverage_dict in list(self.phylo_group_covgs.items()):
             _median.extend(coverage_dict["median"])
         if _median:
             return median(_median)
@@ -117,7 +117,7 @@ class SpeciesPredictor(object):
 
     def _aggregate(self, covgs, threshold=5):
         del_phylo_groups = []
-        for phylo_group, covg_dict in covgs.items():
+        for phylo_group, covg_dict in list(covgs.items()):
             percent_coverage = covg_dict["percent_coverage"]
             length = covg_dict["length"]
             bases_covered = self._bases_covered(percent_coverage, length)
@@ -161,10 +161,10 @@ class SpeciesPredictor(object):
         # for each phylo_group, get the best species in the phylo_group (using
         # sub_complex info where possible)
         species = {}
-        for pg in phylo_groups.keys():
+        for pg in list(phylo_groups.keys()):
             if self.hierarchy:
-                allowed_species = flatten([self.hierarchy.dict[pg]["children"][subc]["children"].keys(
-                ) for subc in self.hierarchy.dict[pg]["children"].keys() if subc is not "Unknown"])
+                allowed_species = flatten([list(self.hierarchy.dict[pg]["children"][subc]["children"].keys(
+                )) for subc in list(self.hierarchy.dict[pg]["children"].keys()) if subc is not "Unknown"])
                 species_to_consider = {k: phylogenetics["species"].get(
                     k, {"percent_coverage": 0}) for k in allowed_species}
             else:
@@ -176,7 +176,7 @@ class SpeciesPredictor(object):
         phylogenetics["species"] = species
         # For each species, get the best sub species where applicable
         sub_species = {}
-        for s in species.keys():
+        for s in list(species.keys()):
             if self.hierarchy:
                 allowed_sub_species = self.hierarchy.get_children(s)
                 sub_species_to_consider = {k: phylogenetics["lineage"].get(
@@ -196,7 +196,7 @@ class SpeciesPredictor(object):
             return phylo_groups
         high_confidence_phylo_groups = [
             pg for pg,
-            d in phylo_groups.items() if d["percent_coverage"] > mix_threshold]
+            d in list(phylo_groups.items()) if d["percent_coverage"] > mix_threshold]
         if len(high_confidence_phylo_groups) > 1:
             # high_confidence_phylo_groups
             return {k: phylo_groups.get(k, {"percent_coverage": 0})
@@ -211,7 +211,7 @@ class SpeciesPredictor(object):
         if not coverage_dict:
             return coverage_dict
         sorted_coverage_dict = sorted(
-            coverage_dict.items(),
+            list(coverage_dict.items()),
             key=lambda x: x[1]["percent_coverage"],
             reverse=True)
         if (sorted_coverage_dict[0][1]["percent_coverage"]) > 0:
@@ -273,7 +273,7 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             ignore.append("Escherichia_coli")
         elif self.is_klebsiella_pneumoniae_present():
             ignore.append("Klebsiella_pneumoniae")
-        for node, covg_collection in self.species_covgs.items():
+        for node, covg_collection in list(self.species_covgs.items()):
             if node not in ignore:
                 contamination_depths.append(covg_collection["median_depth"])
         return contamination_depths

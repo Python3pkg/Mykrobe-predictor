@@ -44,7 +44,7 @@ class MTBCSpeciesTests(TestCase):
             lineage_covgs={},
             hierarchy_json_file=self.hierarchy_json_file)
 
-        best_species = species_predictor._get_best_coverage_dict({
+        best_species = list(species_predictor._get_best_coverage_dict({
             "Mycobacterium_chimaera": {
                 "percent_coverage": 99.162,
                 "median_depth": 39
@@ -56,7 +56,7 @@ class MTBCSpeciesTests(TestCase):
             "Mycobacterium_bovis": {
                 "percent_coverage": 9.894,
                 "median_depth": 12.0
-            }}).keys()
+            }}).keys())
         assert list(best_species) == ["Mycobacterium_chimaera"]
 
     def test_mixed_chimera(self):

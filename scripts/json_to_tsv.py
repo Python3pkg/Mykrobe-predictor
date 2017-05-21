@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from __future__ import print_function
+
 
 # This script is intended to load a JSON dict containing resistotypes,
 # a list of comids and a list of drugs of interest. It will return a column for each drug,
@@ -42,7 +42,7 @@ def get_phylo_group_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).items():
+    for k, v in list(d.get("phylogenetics", {}).get("phylo_group", {}).items()):
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -53,7 +53,7 @@ def get_species_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("species", {}).items():
+    for k, v in list(d.get("phylogenetics", {}).get("species", {}).items()):
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -64,7 +64,7 @@ def get_lineage_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("lineage", {}).items():
+    for k, v in list(d.get("phylogenetics", {}).get("lineage", {}).items()):
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -92,7 +92,7 @@ def get_mean_read_length(d):
 
 def get_called_genes(d, drug=None):
     variants = []
-    for variant_name, variant_call in d.items():
+    for variant_name, variant_call in list(d.items()):
         if variant_call.get("_cls") == "Call.SequenceCall":
             per_cov = variant_call.get('info',{}).get('coverage',{}).get("percent_coverage")
             depth = variant_call.get('info',{}).get('coverage',{}).get("median_depth")
@@ -103,7 +103,7 @@ def get_called_genes(d, drug=None):
 
 def get_variant_calls(d):
     variants = []
-    for variant_name, variant_call in d.items():
+    for variant_name, variant_call in list(d.items()):
         if variant_call.get("_cls") != "Call.SequenceCall":
             wt_depth = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("median_depth")
             alt_depth = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("median_depth")

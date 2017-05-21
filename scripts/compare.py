@@ -435,25 +435,25 @@ def file_paths_to_combined_dict(l):
         except ValueError as e:
             sys.stderr.write(str(e) + " %s \n" % f)
         else:
-            assert data.keys()[0] not in ana
+            assert list(data.keys())[0] not in ana
             ana.update(data)
     return ana
 
 
 def combined_dict_to_result_objects(data):
     out_dict = {}
-    for k, v in data.items():
+    for k, v in list(data.items()):
         out_dict[k] = MykrobePredictorSusceptibilityResult.from_json(
             json.dumps({"susceptibility": v.get("susceptibility", {})}))
     return out_dict
 
 
 def get_union_sample_ids(ana1, ana2):
-    return unique(ana1.keys() + ana2.keys())
+    return unique(list(ana1.keys()) + list(ana2.keys()))
 
 
 def get_intersection_sample_ids(ana1, ana2):
-    return list(set(ana1.keys()).intersection(ana2.keys()))
+    return list(set(ana1.keys()).intersection(list(ana2.keys())))
 
 
 def create_comparision_table(sample_ids, truth, ana1, ana2, ignore_drugs=[]):
@@ -613,9 +613,9 @@ else:
 
 
 def print_header(header, row_delim="\t"):
-    print (row_delim.join(header))
+    print((row_delim.join(header)))
     if args.markdown:
-        print row_delim.join(["-----"] * len(header))
+        print(row_delim.join(["-----"] * len(header)))
 # Run analyses
 if args.analysis == "table":
     # sample  drug  truth  ana1   ana2
@@ -627,30 +627,30 @@ if args.analysis == "table":
         ana2_susceptibility,
         args.ignore_drugs)
     for row in df:
-        print (row_delim.join(row))
+        print((row_delim.join(row)))
 elif args.analysis == "summary":
     # Report a summary of each analysis vs. truth
-    print "\nAna1\n"
+    print("\nAna1\n")
     count_comparision_ana1 = compare_analysis_to_truth(
         sample_ids, truth_susceptibility, ana1_susceptibility, "ana1")
     if args.format == "short":
         header = ["Drug"] + [str(i) for i in Stats({}).row_short_header]
         print_header(header, row_delim)
-        for k, v in count_comparision_ana1.items():
+        for k, v in list(count_comparision_ana1.items()):
             stats = Stats(count_comparision=v)
-            print (row_delim.join([k] + [str(i) for i in stats.row_short]))
+            print((row_delim.join([k] + [str(i) for i in stats.row_short])))
         if args.ana2:
-            print "\nAna2\n"
+            print("\nAna2\n")
             count_comparision_ana2 = compare_analysis_to_truth(
                 sample_ids, truth_susceptibility, ana2_susceptibility, "ana2")
             header = ["Drug"] + [str(i) for i in Stats({}).row_short_header]
             print_header(header, row_delim)
-            for k, v in count_comparision_ana2.items():
+            for k, v in list(count_comparision_ana2.items()):
                 stats = Stats(count_comparision=v)
-                print (row_delim.join([k] + [str(i) for i in stats.row_short]))
+                print((row_delim.join([k] + [str(i) for i in stats.row_short])))
 
             # Diff ana 1 ana 2 summary
-            print "\ndiff ana2 - ana1\n"
+            print("\ndiff ana2 - ana1\n")
 
             header = [
                 "Drug",
@@ -662,7 +662,7 @@ elif args.analysis == "summary":
                 "sensitivity (+/-) ",
                 "specificity (+/-)"]
             print_header(header, row_delim)
-            for k in count_comparision_ana1.keys():
+            for k in list(count_comparision_ana1.keys()):
                 if k in count_comparision_ana2:
                     stats_2 = Stats(
                         count_comparision=count_comparision_ana2[k])
@@ -670,25 +670,25 @@ elif args.analysis == "summary":
                     stats_2 = Stats({})
                 stats_1 = Stats(count_comparision=count_comparision_ana1[k])
                 diff = diff_stats(stats_2, stats_1)
-                print row_delim.join([k] + [str("%+f" % i) for i in diff])
+                print(row_delim.join([k] + [str("%+f" % i) for i in diff]))
 
             ##
             ##
     elif args.format == "long":
-        print (row_delim.join(["Drug"] + [str(i)
-                                          for i in Stats({}).row_long_header]))
-        for k, v in count_comparision.items():
+        print((row_delim.join(["Drug"] + [str(i)
+                                          for i in Stats({}).row_long_header])))
+        for k, v in list(count_comparision.items()):
             stats = Stats(count_comparision=v)
-            print (row_delim.join([k] + [str(i) for i in stats.row_long]))
+            print((row_delim.join([k] + [str(i) for i in stats.row_long])))
         if args.ana2:
-            print "Ana2"
+            print("Ana2")
             count_comparision = compare_analysis_to_truth(
                 sample_ids, truth_susceptibility, ana2_susceptibility)
-            print (row_delim.join(["Drug"] + [str(i)
-                                              for i in Stats({}).row_long_header]))
-            for k, v in count_comparision.items():
+            print((row_delim.join(["Drug"] + [str(i)
+                                              for i in Stats({}).row_long_header])))
+            for k, v in list(count_comparision.items()):
                 stats = Stats(count_comparision=v)
-                print (row_delim.join([k] + [str(i) for i in stats.row_long]))
+                print((row_delim.join([k] + [str(i) for i in stats.row_long])))
 
             header = [
                 "Drug",
@@ -701,12 +701,12 @@ elif args.analysis == "summary":
                 "specificity (+/-)"]
             print_header(header, row_delim)
             # Diff ana 1 ana 2 summary
-            print "\ndiff ana2 - ana1\n"
-            for k in count_comparision_ana1.keys():
+            print("\ndiff ana2 - ana1\n")
+            for k in list(count_comparision_ana1.keys()):
                 stats_2 = Stats(count_comparision=count_comparision_ana2[k])
                 stats_1 = Stats(count_comparision=count_comparision_ana1[k])
                 diff = diff_stats(stats_2, stats_1)
-                print row_delim.join([k] + [str("%+f" % i) for i in diff])
+                print(row_delim.join([k] + [str("%+f" % i) for i in diff]))
 
 # Report the diference between ana1 and and2
 elif args.analysis == "diff":
@@ -725,19 +725,19 @@ elif args.analysis == "diff":
         if args.ana2:
             diff = indv_ana1.diff(indv_ana2)
             if diff:
-                for drug, predict_diff in diff.items():
+                for drug, predict_diff in list(diff.items()):
                     if drug not in args.ignore_drugs:
                         truth_drug_predict = indv_truth.susceptibility.get(
                             drug, {"predict": "NA"}).get("predict")
                         ana1_predict, ana2_predict = predict_diff["predict"]
-                        print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
+                        print(row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict]))
         else:
             diff = indv_truth.diff(indv_ana1)
             if diff:
-                for drug, predict_diff in diff.items():
+                for drug, predict_diff in list(diff.items()):
                     if drug not in args.ignore_drugs:
                         truth_drug_predict, ana1_predict = predict_diff[
                             "predict"]
                         if truth_drug_predict != "NA" and ana1_predict != "NA":
                             ana1_susceptibility
-                            print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ";".join(indv_ana1.susceptibility.get(drug, {}).get("called_by", {}).keys()), ";".join([str(s.get("median_depth", 0)) for s in ana1.get(sample_id, {}).get("phylogenetics").get("phylo_group").values()])])
+                            print(row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ";".join(list(indv_ana1.susceptibility.get(drug, {}).get("called_by", {}).keys())), ";".join([str(s.get("median_depth", 0)) for s in list(ana1.get(sample_id, {}).get("phylogenetics").get("phylo_group").values())])]))
